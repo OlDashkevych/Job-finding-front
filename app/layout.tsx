@@ -12,7 +12,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-const [profile, setProfile] = useState('')
+const [profile, setProfile] = useState<string | null>('')
 
   useEffect(()=>{
     const profile = localStorage.getItem("profile");

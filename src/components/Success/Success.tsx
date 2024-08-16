@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-
-interface IProfile {
-  profile: {
-    name: string;
-    desiredJobTitle: string;
-    aboutMe: string;
-  };
-}
+import { IProfile } from "../../utils/interfaces";
 
 const Success = () => {
-  const [profile, setProfile] = useState<IProfile>();
+  const [profile, setProfile] = useState<IProfile | null>(null);
 
   useEffect(() => {
-    const profile = JSON.parse(localStorage.getItem("profile"));
-    setProfile(profile);
+    const profileString = localStorage.getItem("profile");
+    if (profileString) {
+      try {
+        const profileData = JSON.parse(profileString);
+        setProfile(profileData);
+      } catch (error) {
+        console.error("Error parsing profile data", error);
+        setProfile(null); // Optional: Handle parsing errors by setting profile to null
+      }
+    } else {
+      setProfile(null); // Handle case where profile is not found
+    }
   }, []);
 
   return (
@@ -26,12 +29,12 @@ const Success = () => {
         <p className="text-lg text-gray-700 mb-6 font-bold">
           Your profile has been successfully created.
         </p>
-        <p className="text-lg text-gray-700 mb-2">Name: {profile?.name}</p>
+        <p className="text-lg text-gray-700 mb-2">Name: {profile?.name || 'N/A'}</p>
         <p className="text-lg text-gray-700 mb-2">
-          Desired job title: {profile?.desiredJobTitle}
+          Desired job title: {profile?.desiredJobTitle || 'N/A'}
         </p>
         <p className="text-lg text-gray-700 mb-6">
-          About me: {profile?.aboutMe}
+          About me: {profile?.aboutMe || 'N/A'}
         </p>
         <Link
           href="/jobs"

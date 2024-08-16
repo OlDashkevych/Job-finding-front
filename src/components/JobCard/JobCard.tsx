@@ -1,28 +1,21 @@
 import Link from "next/link";
 import { useState } from "react";
 import { toggleJobLiked } from "../../utils/localStorage";
-
-interface JobCardProps {
-  job: {
-    job_job_title: string;
-    employer_name: string;
-    job_id: string;
-  };
-  setLikedJobs: Function;
-  isFromLikedPage: boolean;
-}
+import { JobCardProps } from "../../utils/interfaces";
 
 export default function JobCard({
   job,
   setLikedJobs,
   isFromLikedPage,
 }: JobCardProps) {
-  const [liked, useLiked] = useState(false);
+  const [liked, setLiked] = useState<boolean>(false);
 
   const handleToggleAddJobToLiked = () => {
     const isLiked = toggleJobLiked(job);
-    useLiked(isLiked);
-    if (isFromLikedPage) {
+    setLiked(isLiked);
+
+    // Check if setLikedJobs is defined before using it
+    if (isFromLikedPage && setLikedJobs) {
       const storedJobs = JSON.parse(localStorage.getItem("likedJobs") || "[]");
       setLikedJobs(storedJobs);
     }
@@ -47,9 +40,9 @@ export default function JobCard({
             viewBox="0 0 24 24"
             fill="none"
             stroke={`${liked || isFromLikedPage ? "red" : "gray"}`}
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
@@ -68,9 +61,9 @@ export default function JobCard({
           >
             <path
               stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
               d="M1 5h12m0 0L9 1m4 4L9 9"
             />
           </svg>

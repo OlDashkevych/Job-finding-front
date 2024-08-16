@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import useSWR from "swr";
 import { fetchJobs } from "../../utils/api";
+import { Job, Profile } from "../../utils/interfaces";
 import JobCard from "../JobCard/JobCard";
 
 export default function Jobs() {
@@ -13,16 +14,18 @@ export default function Jobs() {
     onSubmit: (values) => fetchJobs(values.title),
   });
 
-  const [profile, setProfile] = useState("");
+  const [profile, setProfile] = useState<Profile | null>(null);
 
   const { data: jobs, isLoading } = useSWR(
-    formik.values.title || profile?.desiredJobTitle,
+    formik.values.title || profile?.desiredJobTitle || "", // Fallback to an empty string if profile is null
     fetchJobs
   );
 
   useEffect(() => {
-    const profile = JSON.parse(localStorage.getItem("profile"));
-    setProfile(profile);
+    const storedProfile = localStorage.getItem("profile");
+    if (storedProfile) {
+      setProfile(JSON.parse(storedProfile));
+    }
   }, []);
 
   return (
@@ -74,8 +77,11 @@ export default function Jobs() {
         <div>Loading...</div>
       ) : (
         <div className="grid grid-cols-4 gap-4 mt-8">
-          {jobs?.map((job: { job_id: React.Key }) => (
-            <JobCard key={job.job_id} job={job} />
+          {jobs?.map((job: Job) => (
+            <JobCard
+              key={job.job_id}
+              job={job}
+            />
           ))}
         </div>
       )}
